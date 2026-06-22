@@ -14,15 +14,23 @@ public class rocket : NetworkBehaviour
     {
         rb.linearVelocity = transform.right * speed;
     }
-
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (IsOwner == false || IsSpawned == false) return;
-
-        spawner.shootServerRpc(transform.position, true);
         if (IsServer)
         {
+            explodeServerRpc(transform.position);
             NetworkObject.Despawn();
+        }
+    }
+
+    [ServerRpc]
+    void explodeServerRpc(Vector3 pos)
+    {
+        Collider2D[] hits = Physics2D.OverlapCircleAll(pos, spawner.shootSize, spawner.playersMask);
+        foreach (Collider2D hit in hits)
+        {
+            Vector2 knockDir = ((Vector2)(hit.transform.position - pos)).normalized * spawner.gunStrength;
+            spawner.applyKnockbackClientRpc(hit.GetComponent<NetworkObject>().NetworkObjectId, knockDir);
         }
     }
 }

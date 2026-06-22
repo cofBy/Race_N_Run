@@ -95,6 +95,7 @@ public class gun : NetworkBehaviour
     void shoot(InputAction.CallbackContext cntx)
     {
         if (IsOwner == false || IsSpawned == false) return;
+
         if (timer > fireRate)
         {
             timer = 0;
@@ -136,6 +137,8 @@ public class gun : NetworkBehaviour
     [ServerRpc]
     public void shootServerRpc(Vector3 shooterPos, bool dontIgnorSelf)
     {
+        if (IsOwner == false || IsSpawned == false) return;
+
         Collider2D[] hits = Physics2D.OverlapCircleAll(shooterPos, shootSize, playersMask);
 
         foreach (Collider2D hit in hits)
