@@ -22,8 +22,23 @@ public class playerMovement : NetworkBehaviour
 
     public AnimationCurve accCurve;
 
-    [Header("KnockBack")]
-    public Vector2 targetVel;
+    [Header("gravity")]
+    public float gravityStrength;
+    public float gPull;
+
+    public float gravityClamp;
+
+    [Header("knockBack")]
+    public knockable knockBackinfo;
+
+    [Header("check if grounded")]
+    public LayerMask groundMask;
+    public float length;
+
+    private void Start()
+    {
+        name = "player " + OwnerClientId;
+    }
     private void OnEnable()
     {
         moving.action.Enable();
@@ -57,8 +72,27 @@ public class playerMovement : NetworkBehaviour
     }
     private void FixedUpdate()
     {
-        if (IsOwner == false || IsSpawned == false) return;
 
-        rb.linearVelocity = new Vector2(moveDir.x * speed * speedMultiplier, rb.linearVelocityY) + targetVel;
+        if (grounded())
+        {
+            gPull = 0;
+        }
+        else
+        {
+            gPull = Mathf.Max(gPull - gravityStrength, -gravityClamp);
+        }
+
+        rb.linearVelocity = new Vector2(moveDir.x * speed * speedMultiplier, gPull) + knockBackinfo.targetVel;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.blue;
+        Gizmos.DrawRay(transform.position, Vector2.down * length);
+    }
+
+    bool grounded()
+    {
+        return Physics2D.Raycast(transform.position, Vector2.down, length, groundMask);
     }
 }
