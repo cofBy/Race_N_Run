@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Unity.Netcode;
+using JetBrains.Annotations;
 
 public class playerMovement : NetworkBehaviour
 {
@@ -35,9 +36,22 @@ public class playerMovement : NetworkBehaviour
     public LayerMask groundMask;
     public float length;
 
+    [Header("animation")]
+    public Animator anim;
+    public float runningThreshold;
+    public float flyingThreshold;
+
+    public GameObject bodySprite;
+    public float flipSpeed;
+    float sizeX;
+
     private void Start()
     {
         name = "player " + OwnerClientId;
+
+        pointDir = Vector2.right;
+        moveDir = Vector2.right;
+        sizeX = -1;
     }
     private void OnEnable()
     {
@@ -69,6 +83,28 @@ public class playerMovement : NetworkBehaviour
 
         float dt = timer / timeToMaxSpeed;
         speed = accCurve.Evaluate(dt);
+
+
+        bool flying = !grounded();
+        bool running = Mathf.Abs(pointDir.x) > runningThreshold && grounded();
+        anim.SetBool("running", running);
+        anim.SetBool("flying", flying);
+
+        bodySprite.transform.localScale = new Vector3(sizeX, 1, 1);
+        if (sizeX != -moveDir.x)
+        {
+            sizeX = Mathf.Clamp(sizeX + (flipSpeed * -moveDir.x * Time.deltaTime), -1, 1);
+        }
+
+        if (flying)
+        {
+            transform.up = rb.linearVelocity;
+        }
+        else
+        {
+            transform.up = Vector3.up;
+
+        }
     }
     private void FixedUpdate()
     {
