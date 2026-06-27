@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Unity.Netcode;
-using JetBrains.Annotations;
+using Unity.Hierarchy;
 
 public class playerMovement : NetworkBehaviour
 {
@@ -35,10 +35,10 @@ public class playerMovement : NetworkBehaviour
     [Header("check if grounded")]
     public LayerMask groundMask;
     public float length;
+    public float horiznotalCheckLength;
 
     [Header("animation")]
     public Animator anim;
-    public float runningThreshold;
     public float flyingThreshold;
 
     public GameObject bodySprite;
@@ -83,11 +83,10 @@ public class playerMovement : NetworkBehaviour
         float dt = timer / timeToMaxSpeed;
         speed = accCurve.Evaluate(dt);
 
+        grounded(length * 1.4f, out RaycastHit2D hit, true);
 
-        bool flying = !grounded(length * 1.25f);
-        bool running = Mathf.Abs(pointDir.x) > runningThreshold && grounded(length);
-        anim.SetBool("running", running);
-        anim.SetBool("flying", flying);
+        anim.SetBool("running", pointDir.x != 0 && hit);
+        anim.SetBool("flying", !hit);
 
         bodySprite.transform.localScale = new Vector3(sizeX, 1, 1);
         if (sizeX != -moveDir.x)
@@ -95,32 +94,43 @@ public class playerMovement : NetworkBehaviour
             sizeX = Mathf.Clamp(sizeX + (flipSpeed * -moveDir.x * Time.deltaTime), -1, 1);
         }
 
-        float angle = Mathf.Atan2(-rb.linearVelocityX, rb.linearVelocityY) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0, 0, flying ? angle : 0);
+        transform.up = grounded(length * 1.5f) ? hit.normal : rb.linearVelocity;
     }
     private void FixedUpdate()
     {
+        float moveValue = moveDir.x * speed * speedMultiplier;
+        grounded(length, out RaycastHit2D hit, true);
 
-        if (grounded(length))
+        Vector2 normal = hit.normal;
+        rb.position -= normal * Vector3.Dot((Vector2)transform.position - (length * (Vector2)transform.up) - hit.point, normal);
+
+        RaycastHit2D forwardHit = Physics2D.Raycast(transform.position + length * -transform.up, new Vector2(moveDir.x, 0), horiznotalCheckLength, groundMask);
+        RaycastHit2D downhillHit = Physics2D.Raycast(transform.position + length * -transform.up, new Vector2(-moveDir.x, 0), horiznotalCheckLength, groundMask);
+
+        bool usingForwardHit = (forwardHit) && moveDir.x != 0;
+        if (usingForwardHit) hit = forwardHit;
+
+        if (hit || downhillHit)
         {
             gPull = 0;
+
+            rb.linearVelocity = (Vector2)transform.right * moveValue + knockBackinfo.targetVel;
+
+            Debug.DrawRay(transform.position, -transform.up * length, hit.normal == Vector2.up ? Color.red : (usingForwardHit ? Color.blue : Color.yellow));
         }
         else
         {
             gPull = Mathf.Max(gPull - gravityStrength, -gravityClamp);
+            rb.linearVelocity = new Vector2(moveValue, gPull) + knockBackinfo.targetVel;
         }
-
-        rb.linearVelocity = new Vector2(moveDir.x * speed * speedMultiplier, gPull) + knockBackinfo.targetVel;
     }
 
-    private void OnDrawGizmos()
+    bool grounded(float length, out RaycastHit2D hit, bool useLocalDown = false)
     {
-        Gizmos.color = Color.blue;
-        Gizmos.DrawRay(transform.position, Vector2.down * length);
+        return hit = Physics2D.Raycast(transform.position, useLocalDown ? -transform.up : Vector2.down, length, groundMask);
     }
-
-    bool grounded(float length)
+    bool grounded(float length, bool useLocalDown = false)
     {
-        return Physics2D.Raycast(transform.position, Vector2.down, length, groundMask);
+        return Physics2D.Raycast(transform.position, useLocalDown ? -transform.up : Vector2.down, length, groundMask);
     }
 }

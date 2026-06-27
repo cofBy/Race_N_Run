@@ -19,7 +19,10 @@ public class rocket : NetworkBehaviour
         if (IsServer)
         {
             explodeServerRpc(transform.position);
-            NetworkObject.Despawn();
+            if (IsSpawned)
+            {
+                NetworkObject.Despawn();
+            }
         }
     }
 

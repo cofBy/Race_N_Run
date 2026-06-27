@@ -1159,8 +1159,8 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 1.55, y: 3.4}
+  m_Offset: {x: 0, y: 0.2}
+  m_Size: {x: 1, y: 2.75}
   m_Direction: 0
 --- !u!114 &-1866647311957802754
 MonoBehaviour:
@@ -1326,9 +1326,9 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 8
-  length: 1.72
+  length: 1.75
+  horiznotalCheckLength: 1
   anim: {fileID: 1371309142521475690}
-  runningThreshold: 0.01
   flyingThreshold: 3
   bodySprite: {fileID: 6691966205606068103}
   flipSpeed: 15

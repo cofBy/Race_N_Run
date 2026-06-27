@@ -133,14 +133,13 @@ public class lobby : MonoBehaviour
             string joinCode = await RelayService.Instance.GetJoinCodeAsync(alloc.AllocationId);
             RelayServerData serverData = alloc.ToRelayServerData("dtls");
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(serverData);
-            NetworkManager.Singleton.StartHost();
 
-            lobbyLogicParent.SetActive(false);
-
-            UpdateLobbyOptions options = new UpdateLobbyOptions { Data = new Dictionary<string, DataObject> { { startGameKey, new DataObject(DataObject.VisibilityOptions.Member, joinCode)} } };
+            UpdateLobbyOptions options = new UpdateLobbyOptions { Data = new Dictionary<string, DataObject> { { startGameKey, new DataObject(DataObject.VisibilityOptions.Member, joinCode) } } };
             Lobby lobby = await LobbyService.Instance.UpdateLobbyAsync(joinedLobby.Id, options);
-
             joinedLobby = lobby;
+
+            NetworkManager.Singleton.StartHost();
+            lobbyLogicParent.SetActive(false);
         }
         catch (RelayServiceException exc)
         {
@@ -226,7 +225,6 @@ public class lobby : MonoBehaviour
 
         if (joinedLobby == null) return;
 
-
         mapSelection.gameObject.SetActive(isHost());
         selectedMap.gameObject.SetActive(!isHost());
 
@@ -311,6 +309,7 @@ public class lobby : MonoBehaviour
                 Player firstPlayer = getPlayer();
                 CreateLobbyOptions options = new CreateLobbyOptions { IsPrivate = !isPublic.isOn, Player = firstPlayer};
 
+                Debug.Log($"Auth state: {AuthenticationService.Instance.IsSignedIn}, Player ID: {AuthenticationService.Instance.PlayerId}");
                 Lobby newLobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName.text, 4, options);
                 hostLobby = newLobby;
                 joinedLobby = hostLobby;
@@ -398,9 +397,11 @@ public class lobby : MonoBehaviour
     }
     async void quickJoin()
     {
-        try 
+        try
         {
-            await LobbyService.Instance.QuickJoinLobbyAsync();
+            QuickJoinLobbyOptions options = new QuickJoinLobbyOptions { Player = getPlayer() };
+            Lobby l = await LobbyService.Instance.QuickJoinLobbyAsync(options);
+            joinedLobby = l;
         }
         catch (LobbyServiceException exc)
         {
