@@ -102,6 +102,8 @@ public class playerMovement : NetworkBehaviour
     }
     private void FixedUpdate()
     {
+        if (IsOwner == false || IsSpawned == false) return;
+
         float moveValue = moveDir.x * speed * speedMultiplier;
 
         RaycastHit2D verHit = Physics2D.Raycast(transform.position, -transform.up, length, groundMask);
