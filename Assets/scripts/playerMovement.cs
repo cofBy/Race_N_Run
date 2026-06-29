@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Unity.Netcode;
 using Unity.Hierarchy;
+using UnityEditor.ShaderGraph;
 
 public class playerMovement : NetworkBehaviour
 {
@@ -36,6 +37,9 @@ public class playerMovement : NetworkBehaviour
     public LayerMask groundMask;
     public float length;
     public float horiznotalCheckLength;
+    public float unClimable;
+    public float slideAcc;
+    float slideAmount;
 
     [Header("animation")]
     public Animator anim;
@@ -99,30 +103,42 @@ public class playerMovement : NetworkBehaviour
     private void FixedUpdate()
     {
         float moveValue = moveDir.x * speed * speedMultiplier;
-        grounded(length, out RaycastHit2D hit, true);
 
-        Vector2 normal = hit.normal;
-        rb.position -= normal * Vector3.Dot((Vector2)transform.position - (length * (Vector2)transform.up) - hit.point, normal);
-
+        RaycastHit2D verHit = Physics2D.Raycast(transform.position, -transform.up, length, groundMask);
         RaycastHit2D forwardHit = Physics2D.Raycast(transform.position + length * -transform.up, new Vector2(moveDir.x, 0), horiznotalCheckLength, groundMask);
-        RaycastHit2D downhillHit = Physics2D.Raycast(transform.position + length * -transform.up, new Vector2(-moveDir.x, 0), horiznotalCheckLength, groundMask);
+        RaycastHit2D backHit = Physics2D.Raycast(transform.position + length * -transform.up, new Vector2(-moveDir.x, 0), horiznotalCheckLength, groundMask);
 
-        bool usingForwardHit = (forwardHit) && moveDir.x != 0;
-        if (usingForwardHit) hit = forwardHit;
-
-        if (hit || downhillHit)
+        if (verHit || backHit || forwardHit)
         {
             gPull = 0;
 
-            rb.linearVelocity = (Vector2)transform.right * moveValue + knockBackinfo.targetVel;
+            RaycastHit2D angleHit = verHit ? verHit : (forwardHit ? forwardHit : backHit);
 
-            Debug.DrawRay(transform.position, -transform.up * length, hit.normal == Vector2.up ? Color.red : (usingForwardHit ? Color.blue : Color.yellow));
+            float error = Vector3.Dot((Vector2)transform.position - (length * (Vector2)transform.up) - angleHit.point, angleHit.normal);
+            if (error > 0)
+            {
+                rb.position -= angleHit.normal * error;
+            }
+
+            float angle = Mathf.Abs(Mathf.Atan2(angleHit.normal.x, angleHit.normal.y)) * Mathf.Rad2Deg;
+            Debug.Log(angle);
+            if (angle > unClimable)
+            {
+                slideAmount = Mathf.Max(slideAmount - slideAcc, -gravityClamp);
+            }
+
+            Vector2 tangent = new Vector2(-angleHit.normal.y, angleHit.normal.x);
+            rb.linearVelocity = (Vector2)(transform.right * moveValue) + (tangent * slideAmount) + knockBackinfo.targetVel;
+
+            Color mix = (verHit ? Color.red : Color.black) + (backHit ? Color.blue : Color.black) + (forwardHit ? Color.green : Color.black);
+            Debug.DrawRay(transform.position, -transform.up * length, mix);
         }
         else
         {
             gPull = Mathf.Max(gPull - gravityStrength, -gravityClamp);
             rb.linearVelocity = new Vector2(moveValue, gPull) + knockBackinfo.targetVel;
         }
+        slideAmount = Mathf.Min(slideAmount + slideAcc / 2, 0);
     }
 
     bool grounded(float length, out RaycastHit2D hit, bool useLocalDown = false)

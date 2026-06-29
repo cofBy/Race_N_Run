@@ -1114,7 +1114,7 @@ Rigidbody2D:
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 0
-  m_Material: {fileID: 6200000, guid: 6d64807ee08895f4290128a9049fea06, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -1159,8 +1159,8 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0.2}
-  m_Size: {x: 1, y: 2.75}
+  m_Offset: {x: 0, y: 0}
+  m_Size: {x: 1.5, y: 3.1}
   m_Direction: 0
 --- !u!114 &-1866647311957802754
 MonoBehaviour:
@@ -1328,6 +1328,8 @@ MonoBehaviour:
     m_Bits: 8
   length: 1.75
   horiznotalCheckLength: 1
+  unClimable: 40
+  slideAcc: 0.25
   anim: {fileID: 1371309142521475690}
   flyingThreshold: 3
   bodySprite: {fileID: 6691966205606068103}
