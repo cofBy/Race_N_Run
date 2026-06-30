@@ -6,7 +6,7 @@ public class knockable : NetworkBehaviour
     public Vector2 targetVel;
 
     [Header("self KnockBack")]
-    public Vector2 knockBackFallof;
+    public Vector2 knockBackFalloff;
 
     public void KnockBack(Vector2 dir, playerMovement movement)
     {
@@ -17,8 +17,8 @@ public class knockable : NetworkBehaviour
     {
         if (IsOwner == false || IsSpawned == false) return;
 
-        targetVel.x = shrinkX(targetVel.x, knockBackFallof.x);
-        targetVel.y = shrinkX(targetVel.y, knockBackFallof.y);
+        targetVel.x = shrinkX(targetVel.x, knockBackFalloff.x);
+        targetVel.y = shrinkX(targetVel.y, knockBackFalloff.y);
     }
     float shrinkX(float x, float multiplier)
     {

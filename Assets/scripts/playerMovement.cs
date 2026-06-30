@@ -37,8 +37,12 @@ public class playerMovement : NetworkBehaviour
     public LayerMask groundMask;
     public float length;
     public float horiznotalCheckLength;
+
+    [Header("sliding on slopes")]
     public float unClimable;
     public float slideAcc;
+    public float slideFalloff;
+    Vector2 lastTangent;
     float slideAmount;
 
     [Header("animation")]
@@ -48,6 +52,9 @@ public class playerMovement : NetworkBehaviour
     public GameObject bodySprite;
     public float flipSpeed;
     float sizeX;
+
+    [Header("CameraMovement")]
+    cameraMovment cam;
     private void Start()
     {
         name = "player " + OwnerClientId;
@@ -55,6 +62,8 @@ public class playerMovement : NetworkBehaviour
         pointDir = Vector2.right;
         moveDir = Vector2.right;
         sizeX = -1;
+
+        cam = Camera.main.GetComponent<cameraMovment>();
     }
     private void OnEnable()
     {
@@ -62,6 +71,12 @@ public class playerMovement : NetworkBehaviour
     }
     private void Update()
     {
+        if (IsOwner)
+        {
+            cam.spawned = IsSpawned;
+            cam.target = rb;
+        }
+
         if (IsOwner == false || IsSpawned == false) return;
 
         pointDir = moving.action.ReadValue<Vector2>();
@@ -98,7 +113,7 @@ public class playerMovement : NetworkBehaviour
             sizeX = Mathf.Clamp(sizeX + (flipSpeed * -moveDir.x * Time.deltaTime), -1, 1);
         }
 
-        transform.up = grounded(length * 1.5f) ? hit.normal : rb.linearVelocity;
+        transform.up = grounded(length * 1.5f) || hit ? hit.normal : rb.linearVelocity;
     }
     private void FixedUpdate()
     {
@@ -116,31 +131,29 @@ public class playerMovement : NetworkBehaviour
 
             RaycastHit2D angleHit = verHit ? verHit : (forwardHit ? forwardHit : backHit);
 
-            float error = Vector3.Dot((Vector2)transform.position - (length * (Vector2)transform.up) - angleHit.point, angleHit.normal);
-            if (error > 0)
-            {
-                rb.position -= angleHit.normal * error;
-            }
+            //float error = Vector3.Dot((Vector2)transform.position - (length * (Vector2)transform.up) - angleHit.point, angleHit.normal);
+            //if (error > 0)
+            //{
+            //    rb.position -= angleHit.normal * error;
+            //}
 
-            float angle = Mathf.Abs(Mathf.Atan2(angleHit.normal.x, angleHit.normal.y)) * Mathf.Rad2Deg;
-            Debug.Log(angle);
-            if (angle > unClimable)
+            float angle = Mathf.Atan2(angleHit.normal.x, angleHit.normal.y) * Mathf.Rad2Deg;
+            if (Mathf.Abs(angle) > unClimable)
             {
-                slideAmount = Mathf.Max(slideAmount - slideAcc, -gravityClamp);
+                slideAmount = angle > 0 ? Mathf.Max(slideAmount - slideAcc, -gravityClamp) : Mathf.Min(slideAmount + slideAcc, gravityClamp);
             }
 
             Vector2 tangent = new Vector2(-angleHit.normal.y, angleHit.normal.x);
             rb.linearVelocity = (Vector2)(transform.right * moveValue) + (tangent * slideAmount) + knockBackinfo.targetVel;
-
-            Color mix = (verHit ? Color.red : Color.black) + (backHit ? Color.blue : Color.black) + (forwardHit ? Color.green : Color.black);
-            Debug.DrawRay(transform.position, -transform.up * length, mix);
+            lastTangent = tangent;
         }
         else
         {
             gPull = Mathf.Max(gPull - gravityStrength, -gravityClamp);
-            rb.linearVelocity = new Vector2(moveValue, gPull) + knockBackinfo.targetVel;
+            rb.linearVelocity = new Vector2(moveValue, gPull) + (lastTangent * slideAmount) + knockBackinfo.targetVel;
         }
-        slideAmount = Mathf.Min(slideAmount + slideAcc / 2, 0);
+        slideAmount = slideAmount < 0 ? Mathf.Min(slideAmount + slideFalloff, 0) : Mathf.Max(slideAmount - slideFalloff, 0);
+        Debug.Log(slideAmount);
     }
 
     bool grounded(float length, out RaycastHit2D hit, bool useLocalDown = false)

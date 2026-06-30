@@ -658,7 +658,7 @@ Transform:
   m_GameObject: {fileID: 6003029180155332610}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2.5, y: 0, z: 0}
+  m_LocalPosition: {x: 2, y: 0, z: 0}
   m_LocalScale: {x: 2.3, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1329,7 +1329,8 @@ MonoBehaviour:
   length: 1.75
   horiznotalCheckLength: 1
   unClimable: 40
-  slideAcc: 0.25
+  slideAcc: 0.7
+  slideFalloff: 0.3
   anim: {fileID: 1371309142521475690}
   flyingThreshold: 3
   bodySprite: {fileID: 6691966205606068103}
@@ -1350,7 +1351,7 @@ MonoBehaviour:
   shooting: {fileID: 1120369429361536294, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   aiming: {fileID: -5630151704836100654, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   fireRate: 0.3
-  heldItem: 2
+  heldItem: 0
   rocket: {fileID: 7419681295885655189, guid: d2521a87290489d4d8f009388dab200f, type: 3}
   movement: {fileID: 6531582531636989559}
   knockBackinfo: {fileID: 6027366418452332665}
@@ -1362,7 +1363,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   gunObject: {fileID: 5465896045364530927}
-  holdingCircleRadius: 2.5
+  holdingCircleRadius: 2
   armsHint: {fileID: 3377661819933266335}
   defulteHintPos: {x: 5, y: -10, z: 0}
   oneHandedGun: 0
@@ -1382,7 +1383,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::knockable
   ShowTopMostFoldoutHeaderGroup: 1
   targetVel: {x: 0, y: 0}
-  knockBackFallof: {x: 0.1, y: 0.07}
+  knockBackFalloff: {x: 0.1, y: 0.1}
 --- !u!114 &274410818814399249
 MonoBehaviour:
   m_ObjectHideFlags: 0
