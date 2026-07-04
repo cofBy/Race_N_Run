@@ -78,6 +78,12 @@ public class lobby : MonoBehaviour
     public GameObject lobbyLogicParent;
     public string startGameKey;
 
+    [Header("character selection")]
+    public TMP_Dropdown choosenCharacter;
+
+    [Header("Network Prefabs Array")]
+    public GameObject[] playerPrefabs;
+
     private void Awake()
     {
         createJoinPanel.SetActive(false);
@@ -97,13 +103,6 @@ public class lobby : MonoBehaviour
     async void Start()
     {
         InitializationOptions options = new InitializationOptions();
-
-#if UNITY_EDITOR
-        options.SetProfile("EditorPlayer");
-#else
-    // Standalone builds get a random profile name so multiple builds can run at once
-    options.SetProfile($"BuildPlayer_{Random.Range(0, 9999)}");
-#endif
         await UnityServices.InitializeAsync();
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
         isReady = true;
@@ -153,6 +152,11 @@ public class lobby : MonoBehaviour
                 Debug.LogError("UnityTransport component not found on NetworkManager Config!");
                 return;
             }
+
+            NetworkManager.Singleton.ConnectionApprovalCallback = ApprovalCheck;
+
+            int hostChoice = choosenCharacter.value;
+            NetworkManager.Singleton.NetworkConfig.ConnectionData = System.BitConverter.GetBytes(hostChoice);
 
             NetworkManager.Singleton.StartHost();
             lobbyLogicParent.SetActive(false);
@@ -239,6 +243,9 @@ public class lobby : MonoBehaviour
                 return;
             }
 
+            int clientChoice = choosenCharacter.value;
+            NetworkManager.Singleton.NetworkConfig.ConnectionData = System.BitConverter.GetBytes(clientChoice);
+
             NetworkManager.Singleton.StartClient();
 
             lobbyLogicParent.SetActive(false);
@@ -249,12 +256,32 @@ public class lobby : MonoBehaviour
         }
     }
 
+    private void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
+    {
+        response.Approved = true;
+        response.CreatePlayerObject = true;
+
+        int prefabIndex = 0;
+
+        if (request.Payload != null && request.Payload.Length >= 4)
+        {
+            prefabIndex = System.BitConverter.ToInt32(request.Payload, 0);
+        }
+
+        if (prefabIndex < 0 || prefabIndex >= playerPrefabs.Length)
+        {
+            prefabIndex = 0;
+        }
+
+        NetworkObject netObj = playerPrefabs[prefabIndex].GetComponent<NetworkObject>();
+        response.PlayerPrefabHash = netObj.PrefabIdHash;
+    }
+
     void displayLobby()
     {
         lobbyPanel.SetActive(joinedLobby != null);
 
         if (joinedLobby == null) return;
-
 
         mapSelection.gameObject.SetActive(isHost());
         selectedMap.gameObject.SetActive(!isHost());
@@ -263,7 +290,6 @@ public class lobby : MonoBehaviour
 
         if (isHost())
         {
-
             if (mapSelection.value != lastMap)
             {
                 lastMap = mapSelection.value;
@@ -272,9 +298,6 @@ public class lobby : MonoBehaviour
         }
         else
         {
-            mapSelection.gameObject.SetActive(false);
-            selectedMap.gameObject.SetActive(true);
-
             if (joinedLobby.Data != null && joinedLobby.Data.ContainsKey("map"))
             {
                 selectedMap.text = "selected map : " + joinedLobby.Data["map"].Value;
@@ -304,9 +327,7 @@ public class lobby : MonoBehaviour
             }
         }
 
-
         lobbyNameDisplay.text = joinedLobby.Name;
-
     }
 
     bool isHost()
@@ -398,7 +419,9 @@ public class lobby : MonoBehaviour
 
     Player getPlayer()
     {
-        return new Player { Data = new Dictionary<string, PlayerDataObject> { { "playerName", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, nameInput.text) } } };
+        PlayerDataObject name = new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, nameInput.text);
+        PlayerDataObject character = new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, choosenCharacter.value.ToString());
+        return new Player { Data = new Dictionary<string, PlayerDataObject> { { "playerName", name }, { "playerCharacter", character } } };
     }
 
     async void joinLobby(string code, bool useID)

@@ -855,7 +855,7 @@ SpriteRenderer:
   m_SortingOrder: 1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 5473119375019243942, guid: 80f0547182c909d44b989a8cf002d3ad, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -1073,7 +1073,7 @@ GameObject:
   - component: {fileID: 274410818814399249}
   - component: {fileID: 1371309142521475690}
   m_Layer: 6
-  m_Name: Player
+  m_Name: red evil cof
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1175,7 +1175,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 1120057679
+  GlobalObjectIdHash: 1133907800
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -1376,7 +1376,7 @@ MonoBehaviour:
   shooting: {fileID: 1120369429361536294, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   aiming: {fileID: -5630151704836100654, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   fireRate: 0.3
-  heldItem: 1
+  heldItem: 0
   rocket: {fileID: -6126133330694577639, guid: d2521a87290489d4d8f009388dab200f, type: 3}
   grappleHook: {fileID: 6231234909665477747, guid: 377d56ed04928fe439440dc7db008ad3, type: 3}
   movement: {fileID: 6531582531636989559}

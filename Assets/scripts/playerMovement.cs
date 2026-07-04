@@ -54,8 +54,6 @@ public class playerMovement : NetworkBehaviour
     float sizeX;
     private void Start()
     {
-        name = "player " + OwnerClientId;
-
         pointDir = Vector2.right;
         moveDir = Vector2.right;
         sizeX = -1;
