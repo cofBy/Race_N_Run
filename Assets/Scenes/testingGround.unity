@@ -774,6 +774,7 @@ MonoBehaviour:
   playerPrefabs:
   - {fileID: 8155538224936424213, guid: 3a72a748e0bfc9b4ba97c70498586206, type: 3}
   - {fileID: 8155538224936424213, guid: e9ef43f81e4d4f84584bb1c6b01aa9c1, type: 3}
+  - {fileID: 8155538224936424213, guid: 6b955064d22490244a20e95386a7f53a, type: 3}
 --- !u!4 &200362037
 Transform:
   m_ObjectHideFlags: 0
@@ -3656,6 +3657,9 @@ MonoBehaviour:
       m_Image: {fileID: 0}
       m_Color: {r: 1, g: 1, b: 1, a: 1}
     - m_Text: fih
+      m_Image: {fileID: 0}
+      m_Color: {r: 1, g: 1, b: 1, a: 1}
+    - m_Text: frog
       m_Image: {fileID: 0}
       m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_OnValueChanged:
