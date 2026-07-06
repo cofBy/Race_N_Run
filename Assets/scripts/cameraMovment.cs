@@ -16,6 +16,8 @@ public class cameraMovment : NetworkBehaviour
     Vector3 vel;
     public float speed;
 
+    [Range(-1, 1)] public int camDir;
+
     [Header("zooming out")]
     public float minVel, maxVel;
     public float minSize, maxSize;
@@ -30,7 +32,7 @@ public class cameraMovment : NetworkBehaviour
         if (IsOwner == false || IsSpawned == false) return;
 
         lookAhead = target.transform.position + Vector3.ClampMagnitude(target.linearVelocity, velocityCab);
-        awayFromMouse = target.transform.position + Vector3.ClampMagnitude(target.transform.position - Camera.main.ScreenToWorldPoint(playerGun.aiming.action.ReadValue<Vector2>()), velocityCab);
+        awayFromMouse = target.transform.position + Vector3.ClampMagnitude(target.transform.position - Camera.main.ScreenToWorldPoint(playerGun.aiming.action.ReadValue<Vector2>()), velocityCab) * camDir;
 
         Vector3 follow = Vector3.Lerp(lookAhead, awayFromMouse, followBehavior);
         Camera.main.transform.position = Vector3.SmoothDamp(Camera.main.transform.position - offset, follow, ref vel, speed) + offset;

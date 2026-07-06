@@ -51,6 +51,7 @@ public class playerMovement : NetworkBehaviour
     [Range(-1, 1)]public int defaultRight;
     public float flipSpeed;
     float sizeX;
+
     private void Start()
     {
         pointDir = Vector2.right;
@@ -64,6 +65,7 @@ public class playerMovement : NetworkBehaviour
     private void Update()
     {
         if (IsOwner == false || IsSpawned == false) return;
+        if (countDown.Instance != null && countDown.Instance.canMove.Value == false) return;
 
         pointDir = moving.action.ReadValue<Vector2>();
 
@@ -104,6 +106,11 @@ public class playerMovement : NetworkBehaviour
     private void FixedUpdate()
     {
         if (IsOwner == false || IsSpawned == false) return;
+        if (countDown.Instance != null && countDown.Instance.canMove.Value == false)
+        {
+            rb.linearVelocity = Vector2.zero;
+            return;
+        }
 
         float moveValue = moveDir.x * speed * speedMultiplier;
 

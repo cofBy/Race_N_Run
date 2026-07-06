@@ -83,6 +83,10 @@ public class lobby : MonoBehaviour
 
     [Header("switching maps")]
     public GameObject[] mapParents;
+
+    [Header("counting down")]
+    public countDown countLogic;
+
     private void Awake()
     {
         createJoinPanel.SetActive(false);
@@ -152,6 +156,7 @@ public class lobby : MonoBehaviour
                 return;
             }
             mapParents[mapSelection.value].SetActive(true);
+            countLogic.requiredPlayers = joinedLobby.Players.Count;
 
             NetworkManager.Singleton.ConnectionApprovalCallback = ApprovalCheck;
 
@@ -230,6 +235,10 @@ public class lobby : MonoBehaviour
     {
         try
         {
+            if (joinedLobby != null)
+            {
+                countLogic.requiredPlayers = joinedLobby.Players.Count;
+            }
             JoinAllocation joinAlloc = await RelayService.Instance.JoinAllocationAsync(joinCode);
             RelayServerData serverData = joinAlloc.ToRelayServerData("udp");
 
@@ -242,6 +251,7 @@ public class lobby : MonoBehaviour
                 Debug.LogError("UnityTransport component not found on NetworkManager Config!");
                 return;
             }
+            mapParents[mapSelection.value].SetActive(true);
 
             int clientChoice = choosenCharacter.value;
             NetworkManager.Singleton.NetworkConfig.ConnectionData = System.BitConverter.GetBytes(clientChoice);

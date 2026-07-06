@@ -1388,6 +1388,7 @@ MonoBehaviour:
   followBehavior: 0.4
   velocityCab: 15
   speed: 0.3
+  camDir: 1
   minVel: 10
   maxVel: 30
   minSize: 13
