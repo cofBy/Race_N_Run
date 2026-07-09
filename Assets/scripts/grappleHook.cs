@@ -54,6 +54,8 @@ public class grappleHook : NetworkBehaviour
         ropeRenderer.Target = spawnedTarget.transform;
         ropeRenderer.Anchor = transform;
 
+        FEEL.PlaySound("grapplingRope");
+
         playerNetId.OnValueChanged += OnPlayerIdChanged;
         if (playerNetId.Value != 0)
         {
@@ -119,6 +121,7 @@ public class grappleHook : NetworkBehaviour
                 applyKnockbackClientRpc(knockbackDirection * force);
 
                 startPulling.Value = true;
+                FEEL.PlaySound("hookHitting");
             }
         }
 
@@ -134,7 +137,9 @@ public class grappleHook : NetworkBehaviour
         {
             transform.position = Vector3.SmoothDamp(transform.position, spawnedTarget.position, ref vel, timeToPull);
 
-            if (Vector3.Distance(transform.position, spawnedTarget.position) < 1f || ropeRenderer.Segments[0].distance <= 0.75f)
+            float ropeLength = Vector3.Distance(transform.position, spawnedTarget.position);
+            float segmentLength = ropeRenderer.Segments[0].distance;
+            if (ropeLength < 1.5f || segmentLength <= 0.75f)
             {
                 GetComponent<NetworkObject>().Despawn();
             }
@@ -143,6 +148,7 @@ public class grappleHook : NetworkBehaviour
 
     private void handlePulling()
     {
+        FEEL.StopSound("grapplingRope");
         for (int i = 0; i < ropeRenderer.Segments.Count; i++)
         {
             float currentDistance = ropeRenderer.Segments[i].distance;

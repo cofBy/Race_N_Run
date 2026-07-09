@@ -1591,6 +1591,8 @@ MonoBehaviour:
   flipSpeed: 15
   runningDust: {fileID: 8570444170464759415}
   maxParticals: 10
+  jumpingDust: {fileID: 3058297715259441173, guid: 562b4986bcc5f7d40ac3ed0fad154d02, type: 3}
+  timeBetweenSteps: 0.5
 --- !u!114 &6278861587110409701
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1655,6 +1657,9 @@ MonoBehaviour:
   targetR: {fileID: 4547055032458788039}
   targetL: {fileID: 3083323857300784162}
   shoulders: {fileID: 5692137119814510129}
+  muzzleEffect: {fileID: 0}
+  explosionEffect: {fileID: 0}
+  gunTip: {fileID: 0}
 --- !u!114 &6027366418452332665
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1672,6 +1677,8 @@ MonoBehaviour:
   knockBackFalloff: {x: 0.1, y: 0.1}
   body: {fileID: 4846029138787160940, guid: 51e706f02e110e6438865e2663c50a29, type: 3}
   bodySprite: {fileID: 2100000, guid: 9db9586b4a7fd4c41bee293dda943052, type: 2}
+  shakeAmount: 0.6
+  shakeDuration: 0.5
 --- !u!114 &274410818814399249
 MonoBehaviour:
   m_ObjectHideFlags: 0

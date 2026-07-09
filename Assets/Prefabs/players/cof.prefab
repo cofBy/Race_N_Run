@@ -664,6 +664,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2254853503601085575}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3524127671100243658
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5654612619188050808}
+  m_Layer: 0
+  m_Name: muzzle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5654612619188050808
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3524127671100243658}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.22, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5465896045364530927}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4272950307988774502
 GameObject:
   m_ObjectHideFlags: 0
@@ -974,6 +1005,7 @@ Transform:
   m_Children:
   - {fileID: 3083323857300784162}
   - {fileID: 4547055032458788039}
+  - {fileID: 5654612619188050808}
   m_Father: {fileID: 5876932661556149435}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &5230798349874376938
@@ -1652,6 +1684,8 @@ MonoBehaviour:
   flipSpeed: 15
   runningDust: {fileID: 9083812959250182633}
   maxParticals: 20
+  jumpingDust: {fileID: 3058297715259441173, guid: 562b4986bcc5f7d40ac3ed0fad154d02, type: 3}
+  timeBetweenSteps: 0.4
 --- !u!114 &6278861587110409701
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1717,6 +1751,9 @@ MonoBehaviour:
   targetR: {fileID: 4547055032458788039}
   targetL: {fileID: 3083323857300784162}
   shoulders: {fileID: 0}
+  muzzleEffect: {fileID: 2717713770380157761, guid: c4c3e9c1520507b42b839eec31bef155, type: 3}
+  explosionEffect: {fileID: 1426366553479748403, guid: cb0060501f4d5ee4e831d2496abcc1ed, type: 3}
+  gunTip: {fileID: 5654612619188050808}
 --- !u!114 &6027366418452332665
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1734,6 +1771,8 @@ MonoBehaviour:
   knockBackFalloff: {x: 0.1, y: 0.1}
   body: {fileID: 4846029138787160940, guid: 51e706f02e110e6438865e2663c50a29, type: 3}
   bodySprite: {fileID: 2100000, guid: 0fbf15d5e2cb2c54888d650450afb26d, type: 2}
+  shakeAmount: 0.6
+  shakeDuration: 0.5
 --- !u!114 &274410818814399249
 MonoBehaviour:
   m_ObjectHideFlags: 0

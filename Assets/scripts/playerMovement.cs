@@ -60,6 +60,12 @@ public class playerMovement : NetworkBehaviour
     public float maxParticals;
     bool started;
 
+    public GameObject jumpingDust;
+    bool wasGrounded;
+
+    public float timeBetweenSteps;
+    float stepTimer = 0;
+
     private void Start()
     {
         pointDir = Vector2.right;
@@ -107,9 +113,29 @@ public class playerMovement : NetworkBehaviour
         anim.SetBool("running", pointDir.x != 0 && hit);
         anim.SetBool("flying", !hit);
 
+        if (dt > 0.1f)
+        {
+            if (hit)
+            {
+                stepTimer += Time.deltaTime;
+                if (stepTimer > timeBetweenSteps)
+                {
+                    FEEL.PlaySound("footStep");
+                    stepTimer = 0;
+                }
+            }
+        }
+
         ParticleSystem.EmissionModule emission = runningDust.emission;
         emission.rateOverTime = dt * maxParticals * (hit ? 1 : 0);
         runningDust.transform.localScale = new Vector3(Mathf.Round(sizeX) * -defaultRight, 1, 1);
+
+        if (hit == true && wasGrounded == false)
+        {
+            FEEL.PlaySound("falling");
+            FEEL.Particals(jumpingDust, transform.position + Vector3.down * length, Quaternion.identity);
+        }
+        wasGrounded = hit;
 
         bodySprite.transform.up = hit ? hit.normal : rb.linearVelocity;
         Debug.DrawRay(transform.position, hit.normal * 5, Color.yellow);

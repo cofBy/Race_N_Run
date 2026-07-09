@@ -11,6 +11,10 @@ public class knockable : NetworkBehaviour
     [Header("spawning partical")]
     public GameObject body;
     public Material bodySprite;
+
+    [Header("Juice")]
+    public float shakeAmount;
+    public float shakeDuration;
     public void KnockBack(Vector2 dir, playerMovement movement)
     {
         targetVel += dir;
@@ -38,6 +42,9 @@ public class knockable : NetworkBehaviour
 
     void die()
     {
+        StartCoroutine(FEEL.CameraShake(shakeAmount, shakeDuration, Vector3.one));
+        FEEL.PlaySound("dying");
+
         ParticleSystemRenderer bodyInstace = PoolManager.spawnObject(body, transform.position, new Quaternion()).GetComponent<ParticleSystemRenderer>();
         bodyInstace.material = bodySprite;
 

@@ -136,8 +136,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   tolerance: 2
-  timeToPull: 0.025
-  timeToHideRope: 0.1
+  timeToPull: 0.05
+  timeToHideRope: 0.05
   force: 17
 --- !u!120 &7299782336162229333
 LineRenderer:

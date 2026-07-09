@@ -50,6 +50,11 @@ public class gun : NetworkBehaviour
     public Transform shoulders;
     Vector2 rPos, lPos;
 
+    [Header("juice")]
+    public GameObject muzzleEffect;
+    public ParticleSystem explosionEffect;
+    public Transform gunTip;
+
     private void OnEnable()
     {
         shooting.action.started += shoot;
@@ -131,6 +136,12 @@ public class gun : NetworkBehaviour
             currentShots -= 1;
             timer = 0;
 
+            FEEL.PlaySound("shoot");
+            if (muzzleEffect != null)
+            {
+                FEEL.Particals(muzzleEffect, gunTip.position, gunObject.rotation);
+            }
+
             switch (heldItem)
             {
                 case items.shotgun:
@@ -177,6 +188,13 @@ public class gun : NetworkBehaviour
     public void shootServerRpc(Vector3 shooterPos, bool dontIgnoreSelf)
     {
         Collider2D[] hits = Physics2D.OverlapCircleAll(shooterPos, shootSize, playersMask);
+
+        if (explosionEffect != null)
+        {
+            ParticleSystem expInstance = PoolManager.SpawnObject(explosionEffect, shooterPos, Quaternion.identity);
+            ParticleSystem.MainModule main = expInstance.main;
+            main.startSize = shootSize * 2;
+        }
 
         foreach (Collider2D hit in hits)
         {

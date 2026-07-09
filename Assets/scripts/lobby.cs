@@ -157,7 +157,7 @@ public class lobby : MonoBehaviour
         {
             Allocation alloc = await RelayService.Instance.CreateAllocationAsync(3);
             string joinCode = await RelayService.Instance.GetJoinCodeAsync(alloc.AllocationId);
-            RelayServerData serverData = alloc.ToRelayServerData("udp");
+            RelayServerData serverData = alloc.ToRelayServerData("wss");
 
             if (NetworkManager.Singleton.NetworkConfig.NetworkTransport is UnityTransport transport)
             {
@@ -270,7 +270,7 @@ public class lobby : MonoBehaviour
                 countLogic.requiredPlayers = joinedLobby.Players.Count;
             }
             JoinAllocation joinAlloc = await RelayService.Instance.JoinAllocationAsync(joinCode);
-            RelayServerData serverData = joinAlloc.ToRelayServerData("udp");
+            RelayServerData serverData = joinAlloc.ToRelayServerData("wss");
 
             if (NetworkManager.Singleton.NetworkConfig.NetworkTransport is UnityTransport transport)
             {
@@ -531,6 +531,7 @@ public class lobby : MonoBehaviour
                 spawnedLobbies.Add(newLobby);
 
                 newLobby.onClick.AddListener(() => joinLobby(captured.Id, true));
+                newLobby.onClick.AddListener(() => FEEL.PlaySound("click"));
                 newLobby.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = captured.Name;
             }
         }

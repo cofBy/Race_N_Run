@@ -30,6 +30,14 @@ public class rocket : NetworkBehaviour
     void explodeServerRpc(Vector3 pos)
     {
         Collider2D[] hits = Physics2D.OverlapCircleAll(pos, spawner.shootSize, spawner.playersMask);
+
+        if (spawner.explosionEffect != null)
+        {
+            ParticleSystem expInstance = PoolManager.SpawnObject(spawner.explosionEffect, pos, Quaternion.identity);
+            ParticleSystem.MainModule main = expInstance.main;
+            main.startSize = spawner.shootSize * 2;
+        }
+
         foreach (Collider2D hit in hits)
         {
             Vector2 knockDir = ((Vector2)(hit.transform.position - pos)).normalized * spawner.gunStrength;

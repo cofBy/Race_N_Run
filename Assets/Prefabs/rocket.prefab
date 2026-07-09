@@ -240,7 +240,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::rocket
   ShowTopMostFoldoutHeaderGroup: 1
-  speed: 10
+  speed: 20
   rb: {fileID: 8947471462370224641}
   spawner: {fileID: 0}
 --- !u!70 &6673551886382993991

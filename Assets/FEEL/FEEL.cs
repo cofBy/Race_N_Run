@@ -31,6 +31,15 @@ public class FEEL : MonoBehaviour
             s.Source.Play();
         }
     }
+    public static void StopSound(string name)
+    {
+        Sound s = Array.Find(sounds, sound => sound.clip.name == name);
+
+        if (s != null)
+        {
+            s.Source.Stop();
+        }
+    }
 
     public static void Particals(GameObject obj, Vector3 pos, Quaternion rot)
     {
